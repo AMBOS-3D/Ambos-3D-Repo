@@ -12,4 +12,6 @@ Der geplante Lösungsansatz bietet eine zuverlässige, berührungslose und leich
 
 Es ist sowohl auf die Aufgabe als auch auf die körperlichen und geistigen Fähigkeiten des Arbeiters anpassbar und kann leicht selbst installiert werden.
 Dieses Forum soll der "Bastler"-Community den Nachbau, Ideeninput und Anpassung für weitere Problemstellungen ermöglichen.
+
+https://ambos-3d.ipa.fraunhofer.de/ 
  
