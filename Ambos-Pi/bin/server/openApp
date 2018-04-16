@@ -1,0 +1,4 @@
+#!/bin/bash
+~/AMBOS-PbL/bin/AMBOS_PbL $1 &
+
+disown

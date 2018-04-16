@@ -1,0 +1,3 @@
+#!/bin/bash
+g++ -std=c++11 src/AMBOS_PbL_Main.cpp src/Workplace.cpp src/Box.cpp src/Component.cpp src/JsonHelper.cpp src/Order.cpp src/ledstripPbL.cpp src/json.c -I/usr/local/include/opencv -I/usr/local/include/opencv2 -L/usr/local/lib -I/home/AMBOS-PbL/bin -g -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_videoio -lopencv_video -lwiringPi -lcrypt -o "bin/AMBOS_PbL"
+
