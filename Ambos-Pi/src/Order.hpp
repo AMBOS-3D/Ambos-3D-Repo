@@ -7,8 +7,8 @@
 #include "ledstripPbL.hpp"
 #include <iostream>
 #include <stdlib.h>
+#include "Settings.hpp"
 
-#define LEDFILE "/home/ambos/AMBOS-PbL/data/led/blink.led"
 
 class Order
 {
@@ -28,7 +28,7 @@ class Order
 	int pingreen;
 
 	//Constructor	
-	Order(std::string name, int nr, std::string client, int nrComponents,	Workplace curWorkplace);
+	Order(std::string name, int nr, std::string client, int nrComponents, Workplace curWorkplace, Settings* newSettings);
 
 	//Ablaufsteuerung
 	int processOrder();
@@ -39,5 +39,8 @@ class Order
 
 	//manuelles Reset per Knopfdruck ODER nach vollständigem Prozess 
 	int orderReset();
+
+	//Settings
+	Settings settings;
 
 };

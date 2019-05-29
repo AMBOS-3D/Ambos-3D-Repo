@@ -33,7 +33,11 @@ static struct spi_ioc_transfer parameters[1];
 static int                     offset = 0 ;
 static int                     spi ;
 
-int OpenSPI();
+static int					   my_red;
+static int					   my_green;
+static int					   my_blue;
+
+int OpenSPI(int red_offset, int green_offset, int blue_offset);
 void CloseSPI();
 void ResetState();
 void Token( const char *token );

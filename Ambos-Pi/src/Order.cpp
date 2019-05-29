@@ -3,7 +3,7 @@
 using namespace std;
 using namespace cv;
 
-Order::Order(string name, int nr, string client, int nrComponents, Workplace curWorkplace)
+Order::Order(string name, int nr, string client, int nrComponents, Workplace curWorkplace, Settings* newSettings)
 {
 	m_name = name;
 	m_nr = nr;
@@ -11,6 +11,7 @@ Order::Order(string name, int nr, string client, int nrComponents, Workplace cur
 	m_nrComponents = nrComponents;
 	m_compList = new Component[m_nrComponents];
 	m_curWorkplace = curWorkplace;
+	settings = *newSettings;
 
 }
 
@@ -29,6 +30,10 @@ void Order::setLEDs()
 			ss << curBox->LED_Position << " ";
 			string str = ss.str();
 			redLEDs +=  str;
+		
+			if(curBox->m_componentCounter > 0 ){			
+				greenLEDs +=  str;
+			}
 		}
 		else
 		{
@@ -55,15 +60,16 @@ void Order::setLEDs()
 
 int Order::orderReset()
 {
-#ifdef DEBUG
-	cout << "Order Reset \n" << endl;
-#endif
+	if(settings.debug) {
+		cout << "Order Reset \n" << endl;
+	}
 	//Setze LEDs und BoxLEDstate zurück	
 	Box* curBox;	
 	for(int i=0; i<m_curWorkplace.m_nrBoxes; i++ )
 	{	
 		curBox = &m_curWorkplace.m_boxes[i];
 		curBox->m_LEDstate = false;
+		curBox->m_componentCounter = 0;
 	}
 	setLEDs();
 
@@ -72,13 +78,12 @@ int Order::orderReset()
 
 int Order::processOrder()
 {
-	
-	if( OpenSPI() != 0 ) {
+	if( OpenSPI(settings.offset_red, settings.offset_green, settings.offset_blue) != 0 ) {
 		cerr <<"cant open spi" << endl;
 		return 0;
 	}
 
-	Line("r 2 3 4 ");		
+	Line("g 1 ");		
 
 	int orderState = 1; //Reihenfolge der Objekte, 0 = Auftrag vollständig
 	int compCounter = 1; // Anzahl der entnommenen Teile, falls Reihenfolge egal 
@@ -86,10 +91,9 @@ int Order::processOrder()
 	
 	Box* curBox;	
 	Mat frame;
-
     //init Buttons
-	pinred = 4;
-	pingreen = 6;
+	pinred = settings.shutdown_pin;
+	pingreen = settings.reset_pin;
 	if (wiringPiSetup () < 0)
 	{
 		cerr << "setup failed\n" << endl;
@@ -101,7 +105,6 @@ int Order::processOrder()
     pinMode(pingreen, INPUT);
 	pullUpDnControl(pingreen, PUD_UP);
 
-
 	VideoCapture cap(0);
 	if(!cap.isOpened())
 	{
@@ -109,9 +112,9 @@ int Order::processOrder()
 		return 0;
 	}
 
-#ifdef DEBUG
-	cout << "Start grabbing, press key to stop" << endl;
-#endif
+	if(settings.debug) {
+		cout << "Start grabbing, press key to stop" << endl;
+	}
 	while(1)
 	{
 		cap >> frame;
@@ -119,7 +122,7 @@ int Order::processOrder()
 		{
 			cerr << "ERROR: Unable to grab from camera" << endl;
 			break;
-		}	
+		}
 		//Konvertieren in Grauwertbild
 		Mat frameGray;
 		cvtColor( frame, frameGray, COLOR_BGR2GRAY );
@@ -138,17 +141,17 @@ int Order::processOrder()
 				if(curBox->changeInBox() && (lastGrab==i)) //Änderung in Box, in der die letzte Entnahme erfolgte
 				{	
 					//Korrekte Entnahme
-#ifdef DEBUG
-					cout << "Teil entnommen aus Box " << i << endl;
-#endif  						
+					if(settings.debug) {
+						cout << "Teil entnommen aus Box " << i << endl;
+					}			
 					if(false)//m_compList[curBox->m_componentID].m_packingOrderNr != 0)
 					{
 						//Korrekte Entnahme entprechend Reihenfolge
 						if(orderState == m_compList[curBox->m_componentID].m_packingOrderNr )
 						{
-#ifdef DEBUG		
-							cout << "Korrekte Entnahme, Packing Order Nr. " << m_compList[curBox->m_componentID].m_packingOrderNr << endl;
-#endif
+							if(settings.debug) {
+								cout << "Korrekte Entnahme, Packing Order Nr. " << m_compList[curBox->m_componentID].m_packingOrderNr << endl;
+							}
 							curBox->m_LEDstate = true;							
 							orderState++;
 							orderState %= m_nrComponents;
@@ -157,14 +160,18 @@ int Order::processOrder()
 						}
 						else
 						{
-#ifdef DEBUG
-							cout << "Falsche Entnahme aus Box " << i << endl;
-#endif
+							if(settings.debug) {
+								cout << "Falsche Entnahme aus Box " << i << endl;
+							}
 						}
 					}
 					else //Reihenfolge egal
 					{
-						curBox->m_LEDstate = true;
+						curBox->m_componentCounter++;						
+						if(curBox->m_componentCounter >= m_compList[curBox->m_componentID].m_quantity)
+						{	
+							curBox->m_LEDstate = true;
+						}	
 						compCounter++;
 						compCounter %= (m_nrComponents+1);
 					}
@@ -179,50 +186,59 @@ int Order::processOrder()
 					orderFinished = false;
 				}
 			}
-
 			if(orderFinished)
 			{
-#ifdef DEBUG
-				cout << "Auftrag vollständig \n";
-#endif
+				if(settings.debug) {
+					cout << "Auftrag vollständig \n";
+				}
 				orderState = 1;
 				compCounter = 1;
 				//LEDs abspielen
-				File(LEDFILE);
+				File(settings.ledFile.c_str());
 				orderReset();
 			}
 			//Box einzeichnen
-			Point p1 = Point(curBox->m_posX, curBox->m_posY);
-			Point p2 = Point(curBox->m_posX + curBox->m_sizeX, curBox->m_posY + curBox->m_sizeY);
-			rectangle(frame, p1, p2, (0, 255, 0), 2, 8, 0); 
-		
+			if(settings.visualization){
+				Point p1 = Point(curBox->m_posX, curBox->m_posY);
+				Point p2 = Point(curBox->m_posX + curBox->m_sizeY, curBox->m_posY + curBox->m_sizeX);
+				rectangle(frame, p1, p2, cv::Scalar(0, 140, 255), 1, 8, 0); 
+			}
 		}
-		imshow("Camera", frame);
-		int key = cv::waitKey(5);
-		key = (key ==255) ? -1 : key;
-
 		
 		if(!digitalRead(pinred))
 		{
-#ifdef DEBUG
-			std:cout << "Roter Button gedrückt - Beenden" << std::endl;
-#endif
+			if(settings.debug) {
+				std:cout << "Roter Button gedrückt - Beenden" << std::endl;
+			}
 			delay(100);
-			system("sudo shutdown -h now");
+			system("shutdown -h now");
 		}
 		if(!digitalRead(pingreen))
 		{
-#ifdef DEBUG
-			std::cout << "Grüner Button gedrückt - Reset" << std::endl;
-#endif
+			if(settings.debug) {
+				std::cout << "Grüner Button gedrückt - Reset" << std::endl;
+			}
 			orderState = 1;
 			compCounter = 1;
 			orderReset();
-			delay(200);
+			delay(100);
 		}		
-		else if(key>=0)
-			break;
 
+		if(settings.visualization){
+			namedWindow("AMBOS-3D", WINDOW_NORMAL);
+			resizeWindow("AMBOS-3D", 1280, 960);
+			imshow("AMBOS-3D", frame);
+			int key = cv::waitKey(1);
+			key = (key ==255) ? -1 : key;	
+			// Reset, wenn 'r' gedrückt wird
+		
+			if ((key == 'r') || (key =='R'))
+			{	
+				orderState = 1;
+				compCounter = 1;			
+				orderReset();
+			}	 	
+		}
 	}
 	//beenden
 	ResetState();

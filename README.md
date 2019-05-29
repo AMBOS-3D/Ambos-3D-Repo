@@ -1,4 +1,17 @@
 # Ambos-3D-Repo
+
+## Changelog
+
+- Einstellungen können in der settings.json vorgenommen werden. Neu compilieren ist nicht mehr erforderlich. Weitere Infos in der Dokumentation auf der Homepage!
+- Es können nun mehrere Teile aus einer Box nacheinander entnommen werden.
+- Funktionsweise unter Raspberry Pi 3B + ist nun ebenfalls sichergestellt.
+- Kleinere Bugfixes.
+
+Wichtig!
+Das aktuelle Build funktioniert nur mit der neuesten Android-App. 
+
+## Beschreibung
+
 Das Projekt AMBOS-3D steht für "Assistenzsystem für manuelle Werkstattarbeitsplätze von Menschen mit Behinderung mittels optischer 3D-Sensorik".
 Es ist ein vom Bundesministerium für Bildung und Forschung (BMBF) gefördertes Projekt aus dem Wettbewerb "Light Cares"(FKZ: 13N14288).
 

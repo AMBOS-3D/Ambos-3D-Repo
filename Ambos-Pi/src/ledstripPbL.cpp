@@ -11,7 +11,7 @@
 #include "ledstripPbL.hpp"
 
 /*************/
- int OpenSPI()
+ int OpenSPI(int red_offset, int green_offset, int blue_offset)
 /*************/
 
 {
@@ -56,6 +56,10 @@
    parameters[0].bits_per_word = bits ;
    parameters[0].cs_change     = 0 ;
 
+   my_red = red_offset;
+   my_green = green_offset;
+   my_blue = blue_offset;
+
    return 0 ;
 }
 
@@ -96,18 +100,16 @@
 
       if( (value >= 0) && (value <= 24) )
          tx[value*3+offset] = 8;
-		//printf(" index %i \n", (value*3+offset));
    }
    else
    {
       switch( tolower(*token) )
       {
-         case 'r' : offset = 0 ;
-					//printf(" in Blau \n");
+         case 'r' : offset = my_red ;
                     break ; 
-         case 'b' : offset = 1 ;
+         case 'b' : offset = my_blue ;
                     break ; 
-         case 'g' : offset = 2 ;
+         case 'g' : offset = my_green ;
                     break ; 
       }
    }

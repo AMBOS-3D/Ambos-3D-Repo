@@ -10,6 +10,7 @@ Box::Box(void)
 	m_posY = 0;
 	m_sizeX = 1;
 	m_sizeY = 1;
+	m_componentCounter = 0;
 	m_boxEmpty = false;
 	m_LEDstate = false;
 }
@@ -20,6 +21,7 @@ Box::Box(int x, int y, int cx, int cy)
 	m_posY = y;
 	m_sizeX = cx;
 	m_sizeY = cy;
+	m_componentCounter = 0;
  	m_boxEmpty = false;
 	m_LEDstate = false;
 
@@ -29,6 +31,17 @@ Box::Box(int x, int y, int cx, int cy)
 	calculateLEDPosition();	
 
 	m_bgsubtractor=createBackgroundSubtractorMOG2(50, 16, false);
+}
+
+void Box::setParameterThresholds(int change, int empty){
+	boxChangeThreshold = change;
+	boxEmptyThreshold = empty;
+}
+
+void Box::setParameterLED(int numLED, int startLED, int endLED){
+	num_LED = numLED;
+	start_LED = startLED;
+	end_LED = endLED;
 }
 
 void Box::setSize(int x, int y, int cx, int cy)
@@ -48,12 +61,11 @@ void Box::setSize(int x, int y, int cx, int cy)
 }
 
 void Box::setBoxImage(Mat src)
-{
+{	
 	if((src.cols>=(m_posX + m_sizeX))&&(src.rows>=(m_posY + m_sizeY)))	
 	{
 		Rect ROI(m_posX, m_posY, m_sizeX, m_sizeY);
 		m_boxImg = Mat(src, ROI);
-
 	}
 	else
 		return;
@@ -76,7 +88,7 @@ bool Box::changeInBox()
 	int NbrWhite = countNonZero(threshBg);
 	//Teste Histogrammfunktion	
 	m_boxEmpty = isBoxEmpty(); 
-	if(NbrWhite>(BOXCHANGETHRESHOLD)){ 
+	if(NbrWhite>(boxChangeThreshold)){ 
 		return  true;
 	}
 	else{
@@ -107,12 +119,9 @@ bool Box::contourInBox()
 
 void Box::calculateLEDPosition()
 {
-	int n = 25; //# of LEDs
-	int strip_start = 85; //start point of LED strip
-	int strip_end = 555; //end point of LED strip
-	int strip_size = strip_end - strip_start; //pixel count of LED strip
-	float center = m_posX + (m_sizeX)/2 - strip_start; //center point of box between start and end position of LED strip
-	float LED_size = strip_size/n + 1;
+	int strip_size = end_LED - start_LED; //pixel count of LED strip
+	float center = m_posX + (m_sizeX)/2 - start_LED; //center point of box between start and end position of LED strip
+	float LED_size = strip_size/num_LED + 1;
 	LED_Position = (int)(center/LED_size) + 1;
 }
 
@@ -131,7 +140,7 @@ bool Box::isBoxEmpty()
     double maxVal=0;
     minMaxLoc(hist, 0, &maxVal, 0, 0);
 
-	if (maxVal > BOXEMPTYTHRESHOLD){ 
+	if (maxVal > boxEmptyThreshold){ 
 		return true;
 	}
 	else{

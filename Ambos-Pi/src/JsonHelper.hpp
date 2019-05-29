@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include "json.h"
 #include "Order.hpp"
+#include "Settings.hpp"
 
 class JsonHelper{
 //Funktionen
@@ -15,10 +16,12 @@ public:
 	//schließt das aktuell geöffnete json-File und räumt auf
 	void closeJsonFile();
 	//Lädt den Auftrag im json-File und gibt ihn mit den geladenen Parametern zurück
-	Order* getOrder(json_value* value);
+	Order* getOrder(json_value* value, Settings* settings);
+	//Lädt die Settings im json-File
+	Settings* getSettings(json_value* value);
 private:
 	//Hilfsfunktion um eine Box einzulesen
-	Box getBox(json_value* value);
+	Box getBox(json_value* value, Settings* settings);
 	//Hilfsfunktion um eine Komponente einzulesen
 	Component getComponent(json_value* value, int id);
 	//Funktionen zum casten der Datentypen
