@@ -1,46 +1,56 @@
 #pragma once
-#include <wiringPi.h>
 #include <string>
 #include "Component.hpp"
 #include "Workplace.hpp"
-#include <unistd.h>
-#include "ledstripPbL.hpp"
-#include <iostream>
-#include <stdlib.h>
 #include "Settings.hpp"
+#include "HandDetector.hpp"
 
-
+/**
+ * @class Order
+ * @brief Zentrales Objekt für V1. Main-loop wird in processOrder gestartet. Für die Verarbeitung wird ein FrameHandler Objekt verwendet
+ */
 class Order
-{
+{		
+	// Funktionen
 	public:
+		
+		// Konstruktor	
+		Order(std::string name, int nr, std::string client, int nrComponents, Workplace curWorkplace, Settings* newSettings);
 
-	std::string m_name;
-	int m_nr;
-	std::string m_client;
+		// Ablaufsteuerung
+		int processOrder(HandDetector* model, bool soundsOn);
 
-	//FillerSlideType filler;
-	Component* m_compList;
-	int m_nrComponents;	
-	Workplace m_curWorkplace;
+		// Ansteuerung des LED Strips
+		// liest den aktuellen Zustand aus dem Order-Objekt und setzt passend die LEDs
+		void setLEDs();
 
-	//Taster
-	int pinred;
-	int pingreen;
+		// Manuelles Reset per Knopfdruck ODER nach vollständigem Prozess 
+		int orderReset();
+		
+		// Initialisiere die Buttons
+		void initGPIO();
+		
+		// LED-Show wenn Auftrag/Packung fertig
+		void orderFinishLED();
+		
+		// Settings
+		Settings settings;
+		
+	//Attribute
+	public:
+		// Order Attribute
+		std::string m_name;
+		int m_nr;
+		std::string m_client;
+		
+		
+		// Taster
+		int pinred; // für das Ausschalten
+		int pingreen; // für Reset
+		
+		// Komponenten und Workplace Objekt
+		Component* m_compList;
+		int m_nrComponents;	
+		Workplace m_curWorkplace;
 
-	//Constructor	
-	Order(std::string name, int nr, std::string client, int nrComponents, Workplace curWorkplace, Settings* newSettings);
-
-	//Ablaufsteuerung
-	int processOrder();
-
-	//Ansteuerung des LED Strips
-	//liest den aktuellen Zustand aus dem Order-Objekt und setzt passend die LEDs
-	void setLEDs();
-
-	//manuelles Reset per Knopfdruck ODER nach vollständigem Prozess 
-	int orderReset();
-
-	//Settings
-	Settings settings;
-
-};
+};	

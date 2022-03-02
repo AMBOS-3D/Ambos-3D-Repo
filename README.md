@@ -2,6 +2,16 @@
 
 ## Changelog
 
+V1.2:
+- Verwendung von KI zur Detektion von Griffen erhöhen die Robustheit
+- Es gibt nun die Möglichkeit, Töne abzuspielen
+- Änderungen unter der Oberfläche bereiten eine neue Version der WebApp vor. Diese ist aktuell in der Entwicklung
+- Kleinere Bugfixes.
+
+Wichtig! 
+Das aktuelle Build funktioniert nur mit der neuesten Android-App und einem Raspberry Pi 4.
+
+V1.1:
 - Einstellungen können in der settings.json vorgenommen werden. Neu compilieren ist nicht mehr erforderlich. Weitere Infos in der Dokumentation auf der Homepage!
 - Es können nun mehrere Teile aus einer Box nacheinander entnommen werden.
 - Funktionsweise unter Raspberry Pi 3B + ist nun ebenfalls sichergestellt.

@@ -1,1 +1,43 @@
-{"@class":"de.fraunhofer.ambos_3d.model.Workplace","name":null,"Name":null,"BoxList":[{"boxID":0,"componentID":0,"height":73,"width":125,"x1":85,"y1":190,"name":"Box 0"},{"boxID":1,"componentID":1,"height":66,"width":103,"x1":271,"y1":184,"name":"Box 1"},{"boxID":2,"componentID":2,"height":80,"width":129,"x1":425,"y1":188,"name":"Box 2"}],"numBoxes":3,"Order":{"@class":"Order","orderName":"Demo","orderIDNumber":"1","fillerSlide":{"fillerSlideID":-1,"fillerSlideName":""},"numComponents":3,"components":[{"CompGrp":"Manual","withinBox":true,"fillerSlidePlace":0,"name":"Anleitung 1234567","packingOrder":1,"quantity":1,"withinFillerSlide":false},{"CompGrp":"Hose","withinBox":true,"fillerSlidePlace":1,"name":"PVC 9080706","packingOrder":3,"quantity":1,"withinFillerSlide":true},{"CompGrp":"Hosenipple","withinBox":true,"fillerSlidePlace":1,"name":"8.521.707 / Schlauchnippel AD6,5 x 80mm","packingOrder":2,"quantity":2,"withinFillerSlide":true}],"orderClient":"IPA"}}
+{
+    "@class" : "de.fraunhofer.ambos_3d.model.Workplace",
+    "BoxList" : 
+    [
+		{
+            "componentID" : 1,
+            "height" : 196,
+            "boxID" : 1,
+            "width" : 260,
+            "x" : 620,
+            "y" : 180
+        },
+		{
+            "componentID" : 0,
+            "height" : 196,
+            "boxID" : 2,
+            "width" : 260,
+            "x" : 950,
+            "y" : 180
+        }
+		
+    ],
+    "Order" : 
+    {
+        "@class" : "Order",
+        "components" : 
+        [
+			{
+                "CompGrp" : "Manual",
+                "name" : "Stöpsel",
+                "quantity" : 1
+            },
+			{
+                "CompGrp" : "Manual",
+                "name" : "Schraube",
+                "quantity" : 2
+            }
+        ],
+        "orderClient" : "IPA",
+        "orderIDNumber" : 1,
+        "orderName" : "Demo"
+    }
+}

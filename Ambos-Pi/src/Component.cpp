@@ -2,15 +2,23 @@
 
 using namespace std;
 
+/**
+ * @brief Default Konstrunktor
+ * @return 
+ */
 Component::Component(void){
 }
 
-Component::Component(string name, int internalID, int quantity, bool onSlide, bool inBox, int packingOrderNr)
+/**
+ * @brief Setze entsprechende Attribute
+ * @param name			Name der Komponente
+ * @param internalID	ID
+ * @param quantity		Häufigkeit
+ * @return 
+ */
+Component::Component(string name, int internalID, int quantity)
 {
 	m_name = name;
 	m_quantity = quantity;
-	m_onSlide = onSlide;
-	m_inBox  = inBox;
-	m_packingOrderNr = packingOrderNr;
 	m_internalID = internalID;
 }

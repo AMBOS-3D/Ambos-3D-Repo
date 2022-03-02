@@ -9,7 +9,22 @@
 /*                                                                            */
 /******************************************************************************/
 #include "ledstripPbL.hpp"
+#include <iostream>
+static int					   my_red;
+static int					   my_green;
+static int					   my_blue;
+static const char             *device = "/dev/spidev0.0" ;
+static uint32_t                speed  = 500000 ;
+static uint8_t                 mode   = SPI_MODE_0;
+static uint8_t                 bits   = 8 ;
 
+static unsigned char           tx[75] ;
+static unsigned char           rx[75] ;
+
+static struct spi_ioc_transfer parameters[1];
+
+static int                     offset = 0 ;
+static int                     spi ;
 /*************/
  int OpenSPI(int red_offset, int green_offset, int blue_offset)
 /*************/
@@ -59,7 +74,8 @@
    my_red = red_offset;
    my_green = green_offset;
    my_blue = blue_offset;
-
+	
+   std::cout << "SPI (LED-Strip) erfolgreich geladen" << std::endl;	
    return 0 ;
 }
 

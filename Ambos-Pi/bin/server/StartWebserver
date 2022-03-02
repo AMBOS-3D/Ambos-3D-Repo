@@ -1,5 +1,6 @@
 #!/bin/bash
-mate-terminal --command "/usr/bin/python /home/ambos/AMBOS-PbL/bin/server/webserver.py"
+# Startet den Webserver und auch Ambos. Bei v2 auch den MQTT Broker
+python3 "/home/ambos/workspace/Ambos-Pi/bin/server/webserver.py"
 
 # check if AMBOS webserver is already running, otherwise start it
 #/usr/bin/python /home/ambos/AMBOS-PbL/bin/server/check_webserver.py

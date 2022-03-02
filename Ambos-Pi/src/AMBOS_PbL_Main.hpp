@@ -1,10 +1,10 @@
 #pragma once
 #include <stdio.h>
-#include <iostream>
-#include <stdlib.h>
-#include <core/core.hpp>
-#include <highgui/highgui.hpp>
-#include "JsonHelper.hpp"
-
-//Main Methode
+/**
+ * @brief Start Methode
+ * @param argc
+ * @param argv  An erster Stelle wird die Version (1 oder 2) übergeben. Falls Version1 muss danach noch als
+ * 				zweites Argument ein Pfad zu einer Order-Datei mitgegeben werden
+ * @return 
+ */
 int main(int argc, char **argv);
